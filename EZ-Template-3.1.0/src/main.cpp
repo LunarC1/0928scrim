@@ -45,14 +45,15 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
-      Auton("Example Drive\n\nDrive forward and come back.", drive_example),
-      Auton("Example Turn\n\nTurn 3 times.", turn_example),
-      Auton("Drive and Turn\n\nDrive forward, turn, come back. ", drive_and_turn),
-      Auton("Drive and Turn\n\nSlow down during drive.", wait_until_change_speed),
-      Auton("Swing Example\n\nSwing in an 'S' curve", swing_example),
-      Auton("Motion Chaining\n\nDrive forward, turn, and come back, but blend everything together :D", motion_chaining),
-      Auton("Combine all 3 movements", combining_movements),
-      Auton("Interference\n\nAfter driving forward, robot performs differently if interfered or not.", interfered_example),
+      Auton("PosRed:\nMogo side", posRed),
+      Auton("NegRed:\nRing scoring side", negRed),
+      Auton("NegBlue:\nRing scoring side", negBlue),
+      // Auton("Drive and Turn\n\nDrive forward, turn, come back. ", drive_and_turn),
+      // Auton("Drive and Turn\n\nSlow down during drive.", wait_until_change_speed),
+      // Auton("Swing Example\n\nSwing in an 'S' curve", swing_example),
+      // Auton("Motion Chaining\n\nDrive forward, turn, and come back, but blend everything together :D", motion_chaining),
+      // Auton("Combine all 3 movements", combining_movements),
+      // Auton("Interference\n\nAfter driving forward, robot performs differently if interfered or not.", interfered_example),
   });
 
   // Initialize chassis and auton selector
@@ -102,9 +103,10 @@ void autonomous() {
 
   // drive_example();
   // turn_example();
-  negRed();
+  // negRed();
+  
 
-  // ez::as::auton_selector.selected_auton_call();  // Calls selected auton from autonomous selector
+  ez::as::auton_selector.selected_auton_call();  // Calls selected auton from autonomous selector
 }
 
 /**
@@ -127,9 +129,10 @@ void opcontrol() {
   chassis.drive_brake_set(driver_preference_brake);
 
   bool mogoc = false;
-  bool tiltc = false;
+  // bool tiltc = false;
   bool stickc = false;
   bool redirectc = false;
+  bool liftc = false;
   // int leftY, rightX;
   while (true) {
     // leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y); // Input from Axis 3
@@ -137,33 +140,33 @@ void opcontrol() {
 
     
 
-    // PID Tuner
-    // After you find values that you're happy with, you'll have to set them in auton.cpp
-    if (!pros::competition::is_connected()) {
-      // Enable / Disable PID Tuner
-      //  When enabled:
-      //  * use A and Y to increment / decrement the constants
-      //  * use the arrow keys to navigate the constants
-      if (master.get_digital_new_press(DIGITAL_X))
-        chassis.pid_tuner_toggle();
+    // // PID Tuner
+    // // After you find values that you're happy with, you'll have to set them in auton.cpp
+    // if (!pros::competition::is_connected()) {
+    //   // Enable / Disable PID Tuner
+    //   //  When enabled:
+    //   //  * use A and Y to increment / decrement the constants
+    //   //  * use the arrow keys to navigate the constants
+    //   if (master.get_digital_new_press(DIGITAL_X))
+    //     chassis.pid_tuner_toggle();
 
-      // Trigger the selected autonomous routine
-      if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_DOWN)) {
-        // autonomous();
-        chassis.pid_drive_set(24_in, 100);
-        chassis.pid_wait();
+    //   // Trigger the selected autonomous routine
+    //   if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_DOWN)) {
+    //     // autonomous();
+    //     chassis.pid_drive_set(24_in, 100);
+    //     chassis.pid_wait();
 
-        chassis.pid_drive_set(-24_in, 100);
-        chassis.pid_wait();
-        // drive_example();
-        chassis.drive_brake_set(driver_preference_brake);
-      }
+    //     chassis.pid_drive_set(-24_in, 100);
+    //     chassis.pid_wait();
+    //     // drive_example();
+    //     chassis.drive_brake_set(driver_preference_brake);
+    //   }
 
-      chassis.pid_tuner_iterate();  // Allow PID Tuner to iterate
-    }
+    //   chassis.pid_tuner_iterate();  // Allow PID Tuner to iterate
+    // }
 
 
-    chassis.opcontrol_drive_activebrake_set(2.0);
+    // chassis.opcontrol_drive_activebrake_set(2.0);
     // chassis.opcontrol_tank();  // Tank control
     chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade
     // chassis.opcontrol_arcade_standard(ez::SINGLE);  // Standard single arcade
@@ -176,10 +179,10 @@ void opcontrol() {
 
     if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
       mogoc = !mogoc; 
-      tiltc = !tiltc; 
+      // tiltc = !tiltc; 
       mogo.set_value(mogoc);
-      pros::Task::delay(130);
-      tilter.set_value(tiltc);
+      // pros::Task::delay(130);
+      // tilter.set_value(tiltc);
     }
 		// Mogo tilter + redirect mech
 		if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
@@ -187,23 +190,28 @@ void opcontrol() {
       redirect.set_value(redirectc);
     }
     if(redirectc == false){
-      if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) { intakebot.move(127);}
-      else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) { intakebot.move(-127);}
-      else { intakebot.move(0); }
+      if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) { intake1.move(127); intake2.move(127);}
+      else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) { intake1.move(-127); intake2.move(-127);}
+      else { intake1.move(0); intake2.move(0); }
     }
     else if(redirectc == true){
-      if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) { intakebot.move(127);}
-      else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) { intakebot.move(-127);}
-      else { intakebot.move(0); }
+      if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) { intake1.move(127); intake2.move(127); }
+      else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) { intake1.move(-127); intake2.move(-127); }
+      else { intake1.move(0); intake2.move(0); }
     }
-    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) { stick.set_value(true); }
-    else { stick.set_value(false); }
-    
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2)) {
+      stickc = !stickc; 
+      stick.set_value(stickc);
+    }
 
 		// Wall Stakes Motor
-		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) { liftL.move(100); liftR.move(100); }
-		else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) { liftL.move(-77); liftR.move(-77); }
-		else { liftL.set_brake_mode_all(pros::v5::MotorBrake::hold); liftR.set_brake_mode_all(pros::v5::MotorBrake::hold); liftL.brake(); liftR.brake();}
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
+      liftc = !liftc; 
+      lift.set_value(liftc);
+    } 
+		// if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) { liftL.move(95); liftR.move(95); }
+		// else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) { liftL.move(-50); liftR.move(-50); }
+		// else { liftL.set_brake_mode_all(pros::v5::MotorBrake::hold); liftR.set_brake_mode_all(pros::v5::MotorBrake::hold); liftL.brake(); liftR.brake();}
 
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
