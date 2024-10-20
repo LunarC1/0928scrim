@@ -7,7 +7,7 @@
 
 // pros::Controller master(pros::E_CONTROLLER_MASTER);
 																				
-pros::Imu imu(18);
+pros::Imu imu(20);
 
 // Chassis constructor
 ez::Drive chassis(
@@ -15,7 +15,7 @@ ez::Drive chassis(
     {-8, -9, 10},  // Left Chassis Ports (negative port will reverse it!)
     {-2, 3, 4},  // Right Chassis Ports (negative port will reverse it!)
 
-    18,     // IMU Port
+    20,     // IMU Port
     2.75,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
     480);   // Wheel RPM
 
@@ -45,9 +45,11 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
-      Auton("PosRed:\nMogo side", posRed),
-      Auton("NegRed:\nRing scoring side", negRed),
-      Auton("NegBlue:\nRing scoring side", negBlue),
+    Auton("PosRedV2:\nRing Scoring side", posRedV2),
+    Auton("NegRedV2:\nMogo side", negRedV2),
+      // Auton("PosRed:\nMogo side", posRed),
+      // Auton("NegRed:\nRing scoring side", negRed),
+      // Auton("NegBlue:\nRing scoring side", negBlue),
       // Auton("Drive and Turn\n\nDrive forward, turn, come back. ", drive_and_turn),
       // Auton("Drive and Turn\n\nSlow down during drive.", wait_until_change_speed),
       // Auton("Swing Example\n\nSwing in an 'S' curve", swing_example),
