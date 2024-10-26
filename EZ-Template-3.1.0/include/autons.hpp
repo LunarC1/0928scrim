@@ -29,5 +29,9 @@ void negRedV2();
 
 void posRedV2();
 
+void negBlueV2();
+
+void posBlueV2();
+
 void default_constants();
 

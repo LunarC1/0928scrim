@@ -25,6 +25,20 @@ ez::Drive chassis(
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
+
+// int intakeDebug(){
+//   int speed1 = 0, speed2 = 0;
+//   while (1) {
+//     speed1 = intake1.get_target_velocity();
+//     speed2 = intake2.get_target_velocity();
+//     if (speed1 > 80 || speed2 > 80) {
+//       if (intake1.get_torque() > 11 || intake2.get_torque() > 11) { intake1.move(-127); intake2.move(-127); } 
+//       else { intake1.move(speed1); intake2.move(speed2); }
+//     }
+//     pros::delay(100);
+//   }
+// }
+
 void initialize() {
   // Print our branding over your terminal :D
   ez::ez_template_print();
@@ -45,8 +59,10 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
-    Auton("PosRedV2:\nRing Scoring side", posRedV2),
-    Auton("NegRedV2:\nMogo side", negRedV2),
+    Auton("PosRedV2:\nRed Mogo side", posRedV2),
+    Auton("NegRedV2:\nRed Ring Scoring side", negRedV2),
+    Auton("PosBlueV2:\nBlue Mogo side", posBlueV2),
+    Auton("NegBlueV2:\nBlue Ring Scoring side", negBlueV2),
       // Auton("PosRed:\nMogo side", posRed),
       // Auton("NegRed:\nRing scoring side", negRed),
       // Auton("NegBlue:\nRing scoring side", negBlue),
@@ -102,13 +118,15 @@ void autonomous() {
   chassis.drive_imu_reset();                  // Reset gyro position to 0
   chassis.drive_sensor_reset();               // Reset drive sensors to 0
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
-
+  // pros::task_t task_create (intakeDebug);
+  // pros::task_t task_delete (intakeDebug);
   // drive_example();
   // turn_example();
   // negRed();
   
 
   ez::as::auton_selector.selected_auton_call();  // Calls selected auton from autonomous selector
+  // pros::task_t task_delete (intakeDebug);
 }
 
 /**
@@ -137,10 +155,10 @@ void opcontrol() {
   bool liftc = false;
   // int leftY, rightX;
   while (true) {
+    double torque = intake1.get_torque();
+    printf("Intake Torque: %f", torque);
     // leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y); // Input from Axis 3
-		// rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X); // Input from Axis 1
-
-    
+    // rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X); // Input from Axis 1
 
     // // PID Tuner
     // // After you find values that you're happy with, you'll have to set them in auton.cpp

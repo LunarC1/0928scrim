@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "smh",
+    "project_name": "Tai-Vex D1",
     "target": "v5",
     "templates": {
       "kernel": {
@@ -398,9 +398,9 @@
     },
     "upload_options": {
       "compress_bin": true,
-      "description": "smh",
+      "description": "D2",
       "remote_name": "EZ-Template",
-      "slot": 2,
+      "slot": 1,
       "icon": "power"
     },
     "use_early_access": false
